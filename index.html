@@ -155,7 +155,7 @@
 // ─────────────────────────────
 // CONFIG
 // ─────────────────────────────
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIt3hty7XfQPVGGWLMVjOtF2XZ1DJgWfmDxMl8U_ynXbWMD7ROctL0Hasq7xm8rEQLWA/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyT1ycOFNRwMajzYwso7phd4KwCxONgbDO_7S3NfMKKsGXahFcM5_AeI-vTasgUG2E5FQ/exec";
 
 // ─────────────────────────────
 // QUESTION DATA
@@ -288,6 +288,9 @@ const QOrder = QUESTIONS.map(q => q.id);
 // ─────────────────────────────
 const answers = {};   // { qId: "Label|Code" or ["Label|Code",...] }
 const navStack = [];  // for Back button
+
+// Capture ?ref= from URL (e.g. ?ref=101)
+const REF = new URLSearchParams(window.location.search).get('ref') || 'direct';
 
 // ─────────────────────────────
 // HELPERS
@@ -579,6 +582,7 @@ function submitSurvey() {
 
   const payload = {
     timestamp:              new Date().toISOString(),
+    respondent_ref:         REF,
     q1_regions:             answers.q1 ? answers.q1.map(lbl).join(' | ') : '',
     q2_location:            answers.q2 ? lbl(answers.q2) || answers.q2 : '',
     q3_investment_say:      lbl(answers.q3),    q3_code:    cod(answers.q3),
