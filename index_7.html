@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mining Digitalisation Research | Thinker Media Group</title>
+<style>
+  :root {
+    --dark: #0d1b2a; --blue: #1a6faf; --blue-light: #2a8fd4;
+    --accent: #e8f4fd; --border: #c8dff0; --text: #1a2b3c;
+    --muted: #5a7a94; --success: #1a7a4a; --white: #ffffff; --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #eaf3fb; color: var(--text); min-height: 100vh; }
+
+  .site-header { background: var(--dark); padding: 16px 0 12px; text-align: center; border-bottom: 3px solid var(--blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+  .site-header .logo { color: #fff; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .site-header .logo span { color: var(--blue-light); }
+
+  .prog-wrap { background: var(--dark); padding: 0 20px 14px; display: none; }
+  .prog-wrap.on { display: block; }
+  .prog-inner { max-width: 600px; margin: 0 auto; }
+  .prog-track { background: #1e3450; border-radius: 20px; height: 5px; overflow: hidden; margin-top: 10px; }
+  .prog-fill { height: 100%; background: var(--blue-light); border-radius: 20px; transition: width 0.4s; width: 0%; }
+  .prog-meta { display: flex; justify-content: space-between; margin-top: 6px; }
+  .prog-meta span { color: #8ab4cc; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .card { max-width: 600px; margin: 32px auto 60px; background: var(--white); border-radius: 14px; box-shadow: 0 2px 20px rgba(13,27,42,0.10); overflow: hidden; }
+  .card-top { background: var(--blue); padding: 20px 28px 16px; color: #fff; }
+  .card-top .ptag { font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.72; margin-bottom: 4px; }
+  .card-top .pnum { font-size: 1.1rem; font-weight: 700; }
+  .card-body { padding: 28px 28px 32px; }
+
+  .intro-h { font-size: 1.4rem; font-weight: 800; color: var(--dark); line-height: 1.3; margin-bottom: 6px; }
+  .intro-sub { color: var(--blue); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 18px; }
+  .intro-p { font-size: 0.93rem; line-height: 1.72; color: var(--text); margin-bottom: 13px; }
+  .intro-box { background: var(--accent); border-left: 4px solid var(--blue); border-radius: 0 6px 6px 0; padding: 13px 16px; margin: 20px 0 26px; font-size: 0.87rem; color: var(--muted); line-height: 1.6; }
+  .intro-box strong { color: var(--blue); }
+
+  .qlabel { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
+  .qtext { font-size: 1.05rem; font-weight: 700; color: var(--dark); line-height: 1.45; margin-bottom: 5px; }
+  .qhint { font-size: 0.78rem; color: var(--muted); font-style: italic; margin-bottom: 18px; }
+
+  .opts { list-style: none; }
+  .opts li { margin-bottom: 8px; }
+  .opt { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 0.93rem; color: var(--text); background: #fafcff; transition: border-color 0.13s, background 0.13s; user-select: none; }
+  .opt:hover { border-color: var(--blue-light); background: var(--accent); }
+  .opt.sel { border-color: var(--blue); background: var(--accent); font-weight: 600; }
+  .opt input { width: 18px; height: 18px; accent-color: var(--blue); flex-shrink: 0; cursor: pointer; }
+
+  .fu-block { display: none; margin-top: 20px; background: #f0f8ff; border: 1.5px dashed var(--blue-light); border-radius: var(--radius); padding: 16px 16px 12px; }
+  .fu-block.on { display: block; }
+  .fu-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 6px; }
+
+  .errmsg { color: #c0392b; font-size: 0.8rem; font-weight: 600; margin-top: 8px; display: none; }
+  .errmsg.on { display: block; }
+
+  .btn-row { margin-top: 26px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn { padding: 12px 30px; border: none; border-radius: var(--radius); font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.12s; letter-spacing: 0.03em; }
+  .btn-p { background: var(--blue); color: #fff; }
+  .btn-p:hover { background: var(--blue-light); transform: translateY(-1px); }
+  .btn-b { background: none; color: var(--muted); border: 1.5px solid var(--border); padding: 11px 20px; }
+  .btn-b:hover { border-color: var(--blue); color: var(--blue); }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .end-wrap { text-align: center; padding: 44px 28px; }
+  .end-icon { font-size: 2.8rem; margin-bottom: 14px; }
+  .end-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 12px; }
+  .end-text { font-size: 0.93rem; line-height: 1.7; color: var(--muted); margin-bottom: 14px; }
+  .end-badge { display: inline-block; margin-top: 18px; background: var(--dark); color: #8ab4cc; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 16px; border-radius: 4px; }
+
+  .spin-wrap { text-align: center; padding: 50px 0; }
+  .spinner { width: 38px; height: 38px; border: 4px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.75s linear infinite; margin: 0 auto 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 640px) {
+    .card { margin: 14px 12px 50px; }
+    .card-body { padding: 20px 16px 24px; }
+    .card-top { padding: 16px 16px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">Thinker <span>Media</span> Group</div>
+</header>
+
+<div class="prog-wrap" id="progWrap">
+  <div class="prog-inner">
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-meta"><span id="progSec"></span><span id="progPct"></span></div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="screen active" id="SCR-intro">
+  <div class="card">
+    <div class="card-body">
+      <div class="intro-h">Digitalisation &amp; Risk in the Global Mining Industry</div>
+      <div class="intro-sub">Primary Research Survey · 2026</div>
+      <p class="intro-p">The digitalisation of the world has been underway for some time — however with mixed success in the mining industry. The stories and evidence of wasted capex on digital projects is well known, yet the imperative to make operations and companies digital-facing remains.</p>
+      <p class="intro-p">Today's mining industry carries the juxtaposition of digitalisation risk and the opportunity to better manage existing risk by better using digitalisation tools. It is a tricky landscape, but the prizes are real for those brave and smart enough to successfully navigate it.</p>
+      <p class="intro-p">As a digitalisation professional, we'd like to get your expert opinion on how well miners are digitising operations — and how digitalisation tools are being used to better manage mining risk.</p>
+      <div class="intro-box">
+        <strong>About this research:</strong> This survey is conducted by <strong>Thinker Media Group</strong> as part of ongoing primary research into digitalisation trends and risk management in the global mining sector. All responses are <strong>fully anonymous and confidential</strong>. The survey takes approximately <strong>8–10 minutes</strong>.
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-p" id="beginBtn">Begin Survey →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISQUALIFIED -->
+<div class="screen" id="SCR-disq">
+  <div class="card">
+    <div class="end-wrap">
+      <div class="end-icon">🙏</div>
+      <div class="end-title" style="color:var(--dark)">Thank you for your interest</div>
+      <p class="end-text">Based on your responses, this survey is designed for professionals directly involved in — or with influence over — digitalisation investment decisions. We hope to include your perspective in future research.</p>
+      <div class="end-badge">Thinker Media Group · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETE -->
+<div class="screen" id="SCR-complete">
+  <div class="card">
+    <div class="end-wrap">
+      <div class="end-icon">✅</div>
+      <div class="end-title" style="color:var(--success)">Thank you for participating!</div>
+      <p class="end-text">Your insights will directly shape <strong>Thinker Media Group's</strong> upcoming report on digitalisation and risk management in the global mining industry. We appreciate your time and expertise.</p>
+      <div class="end-badge">Thinker Media Group · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMITTING -->
+<div class="screen" id="SCR-submitting">
+  <div class="card">
+    <div class="spin-wrap">
+      <div class="spinner"></div>
+      <p style="color:var(--muted);font-size:0.92rem;">Saving your responses…</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTION SCREENS injected here -->
+<div id="qscreens"></div>
+
+<script>
+// ─────────────────────────────
+// CONFIG
+// ─────────────────────────────
+const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
+
+// ─────────────────────────────
+// QUESTION DATA
+// ─────────────────────────────
+const QUESTIONS = [
+  { id:"q1",  part:"Part One",   sec:"Demographics",                    num:"Question 1 of 19", type:"multi",
+    text:"In which region(s) does your organisation have an operational presence?",
+    hint:"Select all that apply",
+    opts:[["Africa","1"],["Asia","2"],["Australia","3"],["Europe","4"],["Canada","5"],["United States","6"],["Arctic regions","7"]]
+  },
+  { id:"q2",  part:"Part One",   sec:"Demographics",                    num:"Question 2 of 19", type:"single",
+    text:"Which location are you personally based in?",
+    hint:"Select one — only regions your organisation operates in are shown",
+    dynamicFrom:"q1"
+  },
+  { id:"q3",  part:"Part One",   sec:"Demographics",                    num:"Question 3 of 19", type:"single",
+    text:"Do you have some say in the equipment, technology or software investment process — either as a decision maker, influencer, or as someone consulted ahead of investment decisions?",
+    hint:"Select one",
+    opts:[["Yes","1"],["No","2"]],
+    disqIf: v => v === "No|2"
+  },
+  { id:"q4",  part:"Part One",   sec:"Demographics",                    num:"Question 4 of 19", type:"single",
+    text:"Who has the MOST influence over decisions related to your organisation's digitalisation investments?",
+    hint:"Select one",
+    opts:[["Digitalisation intelligence officer","1"],["Chief executive officer","2"],["Chief technology officer","3"],["Chief digital coordination officer","4"],["Chief information officer","5"],["Digitalisation investment supervisor","6"],["Digital transformation lead","7"],["Senior digital engineer / manager","8"]],
+    disqIf: v => ["Digitalisation intelligence officer|1","Chief digital coordination officer|4","Digitalisation investment supervisor|6"].includes(v)
+  },
+  { id:"q5",  part:"Part Two",   sec:"Driving Digitalisation Investment", num:"Question 5 of 19", type:"single",
+    text:"How would you describe your organisation's current level of digital maturity?",
+    hint:"Select one",
+    opts:[["Early stage (mostly manual / paper-based processes)","1"],["Basic digitisation (some systems, limited integration)","2"],["Integrated digital systems across key functions","3"],["Advanced / data-driven operations","4"],["Fully digitally transformed enterprise","5"]]
+  },
+  { id:"q6",  part:"Part Two",   sec:"Driving Digitalisation Investment", num:"Question 6 of 19", type:"multi",
+    text:"Which areas of your operations are currently digitised?",
+    hint:"Select all that apply",
+    opts:[["Exploration","1"],["Mine planning","2"],["Fleet management","3"],["Maintenance","4"],["Processing plant operations","5"],["Supply chain / logistics","6"],["HSE (Health, Safety, Environment)","7"],["Finance / ERP","8"],["HR / workforce management","9"]],
+    followup:{ id:"q6f", text:"Which is / was the GREATEST priority to digitise based on ROI?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q7",  part:"Part Two",   sec:"Driving Digitalisation Investment", num:"Question 7 of 19", type:"multi",
+    text:"Which technologies are currently deployed at your sites?",
+    hint:"Select all that apply",
+    opts:[["IoT sensors","1"],["Autonomous haulage / drilling","2"],["Remote operations centres","3"],["Predictive maintenance tools","4"],["AI / machine learning analytics","5"],["Digital twins","6"],["Cloud-based data platforms","7"]],
+    followup:{ id:"q7f", text:"Which delivers the GREATEST value / ROI?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q8",  part:"Part Two",   sec:"Driving Digitalisation Investment", num:"Question 8 of 19", type:"multi",
+    text:"What barriers are preventing your organisation from achieving further digitalisation?",
+    hint:"Select all that apply",
+    opts:[["Capital cost","1"],["Legacy systems","2"],["Workforce resistance","3"],["Inability to integrate new and legacy datasets","4"],["Skills availability","5"],["Cybersecurity concerns","6"],["Lack of clear ROI","7"],["Leadership alignment","8"],["Regulatory constraints","9"]],
+    followup:{ id:"q8f", text:"What is the GREATEST barrier?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q9",  part:"Part Two",   sec:"Driving Digitalisation Investment", num:"Question 9 of 19", type:"multi",
+    text:"What typically triggers a major digital investment?",
+    hint:"Select all that apply",
+    opts:[["Operational performance gap","1"],["Safety or regulatory pressure","2"],["Competitor benchmarking","3"],["Technology obsolescence","4"],["Corporate transformation mandate","5"],["Vendor-led innovation pitch","6"],["M&A integration","7"]],
+    followup:{ id:"q9f", text:"What factor has the GREATEST influence?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q10", part:"Part Two",   sec:"Driving Digitalisation Investment", num:"Question 10 of 19", type:"multi",
+    text:"How is ROI typically validated before approval?",
+    hint:"Select all that apply",
+    opts:[["Vendor business case accepted","1"],["Internal modelling only","2"],["External consultant validation","3"],["Pilot project required","4"],["ROI not rigorously quantified","5"],["Case-by-case approach","6"]],
+    followup:{ id:"q10f", text:"What factor has the GREATEST influence on ROI validation?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q11", part:"Part Two",   sec:"Driving Digitalisation Investment", num:"Question 11 of 19", type:"multi",
+    text:"What most commonly slows or derails digital investments?",
+    hint:"Select all that apply",
+    opts:[["Misalignment between IT and Operations","1"],["Budget competition","2"],["Risk aversion from finance","3"],["Integration complexity","4"],["Cybersecurity concerns","5"],["Change resistance at site level","6"],["Leadership turnover","7"],["Insufficient skills to implement","8"]],
+    followup:{ id:"q11f", text:"Which is the BIGGEST problem?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q12", part:"Part Three", sec:"Digitalising Risk",               num:"Question 12 of 19", type:"single",
+    text:"How digitally enabled is your organisation's overall risk-management framework?",
+    hint:"Select one",
+    opts:[["Mostly manual / spreadsheet based","1"],["Digitised reporting but limited analytics","2"],["Integrated digital dashboards across functions","3"],["Real-time risk monitoring systems","4"],["Predictive / AI-driven risk modelling","5"]]
+  },
+  { id:"q13", part:"Part Three", sec:"Digitalising Risk",               num:"Question 13 of 19", type:"multi",
+    text:"Which of the following describes your organisation's stage of digital risk-management maturity?",
+    hint:"Select all that apply",
+    opts:[["Reactive","1"],["Structured","2"],["Integrated","3"],["Predictive","4"],["Proactive & Automated","5"]],
+    followup:{ id:"q13f", text:"Which BEST describes your organisation's current stage?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q14", part:"Part Three", sec:"Digitalising Risk",               num:"Question 14 of 19", type:"multi",
+    text:"Which types of risk are currently monitored using digital systems?",
+    hint:"Select all that apply",
+    opts:[["Operational risk (equipment, down time)","1"],["Safety risk (HSE incidents, near misses)","2"],["Geotechnical risk","3"],["Environmental / ESG risk","4"],["Supply-chain risk","5"],["Cyber-security risk","6"],["Financial / Commodity risk","7"],["Climate risk","8"]]
+  },
+  { id:"q15", part:"Part Three", sec:"Digitalising Risk",               num:"Question 15 of 19", type:"multi",
+    text:"Which risks have the potential for a material incident causing major financial loss?",
+    hint:"Select all that apply",
+    opts:[["Operational risk (equipment, down time)","1"],["Safety risk (HSE incidents, near misses)","2"],["Geotechnical risk","3"],["Environmental / ESG risk","4"],["Supply-chain risk","5"],["Cyber-security risk","6"],["Financial / Commodity risk","7"],["Climate risk","8"]],
+    followup:{ id:"q15f", text:"Which risk carries the GREATEST potential for a material incident causing major financial loss?", hint:"Select one — from your selections above only" }
+  },
+  { id:"q16", part:"Part Three", sec:"Digitalising Risk",               num:"Question 16 of 19", type:"single",
+    text:"Do you have concerns about the data used to measure risks?",
+    hint:"Select one",
+    opts:[["Yes","1"],["No","2"]],
+    branchOn: { ifVal:"Yes|1", then:"q16b", else:"q17" }
+  },
+  { id:"q16b", part:"Part Three", sec:"Digitalising Risk",              num:"Question 16 of 19", type:"multi",
+    text:"What are your concerns about the data used to measure risks?",
+    hint:"Select all that apply",
+    opts:[["Lack of technical / software tools to properly use available data","1"],["Lack of technical / data skills to properly use the available data","2"],["Data availability","3"],["Data quality","4"],["Trust in legacy data","5"],["Data from a moment in time","6"]],
+    followup:{ id:"q16bf", text:"What is your GREATEST concern?", hint:"Select one — from your selections above only" },
+    isConditional: true
+  },
+  { id:"q17", part:"Part Three", sec:"Digitalising Risk",               num:"Question 17 of 19", type:"single",
+    text:"How confident are you in the accuracy and timeliness of your risk data?",
+    hint:"Select one",
+    opts:[["Very confident","1"],["Moderately confident","2"],["Limited confidence","3"],["Low confidence","4"],["I don't trust our risk data","5"]]
+  },
+  { id:"q18", part:"Part Three", sec:"Digitalising Risk",               num:"Question 18 of 19", type:"single",
+    text:"How frequently are digital risk insights used in operational decision making?",
+    hint:"Select one",
+    opts:[["Rarely","1"],["During monthly reporting cycles","2"],["Weekly operational reviews","3"],["Daily management meetings","4"],["In real-time automated controls","5"]]
+  },
+  { id:"q19", part:"Part Three", sec:"Digitalising Risk",               num:"Question 19 of 19", type:"single",
+    text:"Has digitalisation measurably reduced risk exposure to your organisation?",
+    hint:"Select one",
+    opts:[["Significant reduction","1"],["Moderate improvement","2"],["Limited impact","3"],["No measurable change","4"],["Too early to assess","5"]]
+  }
+];
+
+// ID → question map
+const QMap = {};
+QUESTIONS.forEach(q => QMap[q.id] = q);
+
+// Ordered list of IDs for normal next-question lookup
+const QOrder = QUESTIONS.map(q => q.id);
+
+// ─────────────────────────────
+// STATE
+// ─────────────────────────────
+const answers = {};   // { qId: "Label|Code" or ["Label|Code",...] }
+const navStack = [];  // for Back button
+
+// ─────────────────────────────
+// HELPERS
+// ─────────────────────────────
+function lbl(v)  { return v ? v.split('|')[0] : ''; }
+function cod(v)  { return v ? (v.split('|')[1] || '') : ''; }
+function mlbl(a) { return Array.isArray(a) ? a.map(lbl).join(' | ') : lbl(a); }
+function mcod(a) { return Array.isArray(a) ? a.map(cod).join('|') : cod(a); }
+
+function checked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
+}
+function radio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setProgress(qId) {
+  const q = QMap[qId];
+  if (!q) return;
+  const mainQs = QUESTIONS.filter(x => !x.isConditional);
+  const idx = mainQs.findIndex(x => x.id === qId);
+  const i = idx >= 0 ? idx : mainQs.length - 1;
+  const pct = Math.round(((i + 1) / mainQs.length) * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progSec').textContent = q.part + ' — ' + q.sec;
+  document.getElementById('progWrap').classList.add('on');
+}
+
+function showErr(id, on) {
+  const el = document.getElementById('ERR-' + id);
+  if (el) el.classList.toggle('on', on);
+}
+
+// ─────────────────────────────
+// BUILD SCREENS
+// ─────────────────────────────
+function buildScreens() {
+  const wrap = document.getElementById('qscreens');
+  QUESTIONS.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'screen';
+    div.id = 'SCR-' + q.id;
+    div.innerHTML = renderQ(q);
+    wrap.appendChild(div);
+  });
+  // Single delegated listener for all option changes
+  wrap.addEventListener('change', onOptChange);
+}
+
+function renderOpts(opts, name, type) {
+  const t = type === 'multi' ? 'checkbox' : 'radio';
+  return (opts || []).map(([label, code]) =>
+    `<li><label class="opt"><input type="${t}" name="${name}" value="${label}|${code}"> ${label}</label></li>`
+  ).join('');
+}
+
+function renderQ(q) {
+  const isFirst = q.id === QUESTIONS[0].id;
+  const backBtn = isFirst ? '' : `<button class="btn btn-b" data-back="1">← Back</button>`;
+  const contLabel = q.id === 'q19' ? 'Submit Survey →' : 'Continue →';
+
+  const optsHtml = q.dynamicFrom
+    ? '' // built at runtime
+    : renderOpts(q.opts, q.id, q.type);
+
+  const fuHtml = q.followup ? `
+    <div class="fu-block" id="FU-${q.id}">
+      <div class="fu-tag">↳ Follow-up</div>
+      <div class="qtext" style="font-size:0.97rem;margin-bottom:4px">${q.followup.text}</div>
+      <div class="qhint">${q.followup.hint}</div>
+      <ul class="opts" id="FUOPTS-${q.followup.id}"></ul>
+      <div class="errmsg" id="ERR-${q.followup.id}">Please select one option to continue.</div>
+    </div>` : '';
+
+  return `
+    <div class="card">
+      <div class="card-top">
+        <div class="ptag">${q.part} — ${q.sec}</div>
+        <div class="pnum">${q.num}</div>
+      </div>
+      <div class="card-body">
+        <div class="qlabel">${q.type === 'multi' ? 'Multiple choice' : 'Single choice'}</div>
+        <div class="qtext">${q.text}</div>
+        <div class="qhint">${q.hint}</div>
+        <ul class="opts" id="OPTS-${q.id}">${optsHtml}</ul>
+        <div class="errmsg" id="ERR-${q.id}">Please make a selection to continue.</div>
+        ${fuHtml}
+        <div class="btn-row">
+          ${backBtn}
+          <button class="btn btn-p" data-next="${q.id}">
+            ${contLabel}
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────
+// OPTION CHANGE HANDLER
+// ─────────────────────────────
+function onOptChange(e) {
+  const inp = e.target;
+  if (!inp || (inp.type !== 'checkbox' && inp.type !== 'radio')) return;
+  const name = inp.name;
+
+  // Sync .sel class
+  if (inp.type === 'radio') {
+    document.querySelectorAll(`input[name="${name}"]`).forEach(i => {
+      i.closest('.opt').classList.toggle('sel', i.checked);
+    });
+  } else {
+    inp.closest('.opt').classList.toggle('sel', inp.checked);
+  }
+
+  // If it's a multi parent with a followup, rebuild followup options
+  const q = QMap[name];
+  if (q && q.followup) {
+    const sel = checked(name);
+    const fuBlock = document.getElementById('FU-' + name);
+    if (sel.length > 0) {
+      fuBlock.classList.add('on');
+      rebuildFu(q.followup.id, sel);
+    } else {
+      fuBlock.classList.remove('on');
+      document.getElementById('FUOPTS-' + q.followup.id).innerHTML = '';
+    }
+  }
+}
+
+function rebuildFu(fuId, selVals) {
+  const prev = radio(fuId);
+  const container = document.getElementById('FUOPTS-' + fuId);
+  container.innerHTML = selVals.map(v =>
+    `<li><label class="opt"><input type="radio" name="${fuId}" value="${v}"> ${lbl(v)}</label></li>`
+  ).join('');
+  // Restore selection if still valid
+  if (prev && selVals.includes(prev)) {
+    const el = container.querySelector(`input[value="${CSS.escape(prev)}"]`);
+    if (el) { el.checked = true; el.closest('.opt').classList.add('sel'); }
+  }
+}
+
+// ─────────────────────────────
+// CLICK HANDLER (Back / Continue)
+// ─────────────────────────────
+document.addEventListener('click', function(e) {
+  // Back button
+  if (e.target.closest('[data-back]')) { goBack(); return; }
+  // Continue / Submit button
+  const btn = e.target.closest('[data-next]');
+  if (btn) { advance(btn.dataset.next); return; }
+  // Begin Survey button
+  if (e.target.id === 'beginBtn') { goTo('q1'); return; }
+});
+
+// ─────────────────────────────
+// NAVIGATION
+// ─────────────────────────────
+function goTo(qId) {
+  const q = QMap[qId];
+  if (!q) return;
+  setProgress(qId);
+
+  // Build dynamic Q2 options from Q1 answers
+  if (q.dynamicFrom) {
+    const parentAns = answers[q.dynamicFrom];
+    const regions = Array.isArray(parentAns) ? parentAns.map(lbl) : [];
+    document.getElementById('OPTS-' + qId).innerHTML = regions.map(r =>
+      `<li><label class="opt"><input type="radio" name="${qId}" value="${r}"> ${r}</label></li>`
+    ).join('');
+  }
+
+  // Restore previous answer if navigating back
+  restoreAnswer(q);
+  showScreen('SCR-' + qId);
+}
+
+function goBack() {
+  if (navStack.length > 0) {
+    const prev = navStack.pop();
+    goTo(prev);
+  } else {
+    document.getElementById('progWrap').classList.remove('on');
+    showScreen('SCR-intro');
+  }
+}
+
+function restoreAnswer(q) {
+  const saved = answers[q.id];
+  if (!saved) return;
+
+  if (q.type === 'multi' && Array.isArray(saved)) {
+    saved.forEach(v => {
+      const el = document.querySelector(`input[name="${q.id}"][value="${CSS.escape(v)}"]`);
+      if (el) { el.checked = true; el.closest('.opt').classList.add('sel'); }
+    });
+    if (q.followup && saved.length > 0) {
+      const fuBlock = document.getElementById('FU-' + q.id);
+      if (fuBlock) {
+        fuBlock.classList.add('on');
+        rebuildFu(q.followup.id, saved);
+        const savedFu = answers[q.followup.id];
+        if (savedFu) {
+          requestAnimationFrame(() => {
+            const el = document.querySelector(`input[name="${q.followup.id}"][value="${CSS.escape(savedFu)}"]`);
+            if (el) { el.checked = true; el.closest('.opt').classList.add('sel'); }
+          });
+        }
+      }
+    }
+  } else if (typeof saved === 'string') {
+    const el = document.querySelector(`input[name="${q.id}"][value="${CSS.escape(saved)}"]`);
+    if (el) { el.checked = true; el.closest('.opt').classList.add('sel'); }
+  }
+}
+
+// ─────────────────────────────
+// ADVANCE (validate + go next)
+// ─────────────────────────────
+function advance(qId) {
+  const q = QMap[qId];
+  if (!q) return;
+
+  // Clear errors
+  showErr(qId, false);
+  if (q.followup) showErr(q.followup.id, false);
+
+  // Validate
+  if (q.type === 'multi') {
+    const sel = checked(qId);
+    if (sel.length === 0) { showErr(qId, true); return; }
+    answers[qId] = sel;
+    if (q.followup) {
+      const fu = radio(q.followup.id);
+      if (!fu) { showErr(q.followup.id, true); return; }
+      answers[q.followup.id] = fu;
+    }
+  } else {
+    const val = radio(qId);
+    if (!val) { showErr(qId, true); return; }
+    answers[qId] = val;
+  }
+
+  // Disqualify?
+  if (q.disqIf && q.disqIf(answers[qId])) {
+    document.getElementById('progWrap').classList.remove('on');
+    showScreen('SCR-disq');
+    return;
+  }
+
+  // Push to navStack for Back
+  navStack.push(qId);
+
+  // Branch (Q16 Yes/No)
+  if (q.branchOn) {
+    const nextId = (answers[qId] === q.branchOn.ifVal) ? q.branchOn.then : q.branchOn.else;
+    if (answers[qId] !== q.branchOn.ifVal) {
+      answers['q16b'] = null;
+      answers['q16bf'] = null;
+    }
+    goTo(nextId);
+    return;
+  }
+
+  // Last question → submit
+  if (qId === 'q19') { submitSurvey(); return; }
+
+  // Normal next
+  const idx = QOrder.indexOf(qId);
+  const nextId = QOrder[idx + 1];
+  if (nextId) goTo(nextId);
+}
+
+// ─────────────────────────────
+// SUBMIT
+// ─────────────────────────────
+function submitSurvey() {
+  showScreen('SCR-submitting');
+  document.getElementById('progWrap').classList.remove('on');
+
+  const payload = {
+    timestamp:              new Date().toISOString(),
+    q1_regions:             answers.q1 ? answers.q1.map(lbl).join(' | ') : '',
+    q2_location:            answers.q2 ? lbl(answers.q2) || answers.q2 : '',
+    q3_investment_say:      lbl(answers.q3),    q3_code:    cod(answers.q3),
+    q4_decision_maker:      lbl(answers.q4),    q4_code:    cod(answers.q4),
+    q5_digital_maturity:    lbl(answers.q5),    q5_code:    cod(answers.q5),
+    q6_digitised_areas:     mlbl(answers.q6),   q6_codes:   mcod(answers.q6),
+    q6f_greatest_priority:  lbl(answers.q6f),   q6f_code:   cod(answers.q6f),
+    q7_technologies:        mlbl(answers.q7),   q7_codes:   mcod(answers.q7),
+    q7f_greatest_value:     lbl(answers.q7f),   q7f_code:   cod(answers.q7f),
+    q8_barriers:            mlbl(answers.q8),   q8_codes:   mcod(answers.q8),
+    q8f_greatest_barrier:   lbl(answers.q8f),   q8f_code:   cod(answers.q8f),
+    q9_triggers:            mlbl(answers.q9),   q9_codes:   mcod(answers.q9),
+    q9f_greatest_trigger:   lbl(answers.q9f),   q9f_code:   cod(answers.q9f),
+    q10_roi_methods:        mlbl(answers.q10),  q10_codes:  mcod(answers.q10),
+    q10f_greatest_roi:      lbl(answers.q10f),  q10f_code:  cod(answers.q10f),
+    q11_obstacles:          mlbl(answers.q11),  q11_codes:  mcod(answers.q11),
+    q11f_biggest_problem:   lbl(answers.q11f),  q11f_code:  cod(answers.q11f),
+    q12_risk_enablement:    lbl(answers.q12),   q12_code:   cod(answers.q12),
+    q13_risk_maturity:      mlbl(answers.q13),  q13_codes:  mcod(answers.q13),
+    q13f_best_describes:    lbl(answers.q13f),  q13f_code:  cod(answers.q13f),
+    q14_risks_monitored:    mlbl(answers.q14),  q14_codes:  mcod(answers.q14),
+    q15_material_risks:     mlbl(answers.q15),  q15_codes:  mcod(answers.q15),
+    q15f_greatest_risk:     lbl(answers.q15f),  q15f_code:  cod(answers.q15f),
+    q16_data_concerns:      lbl(answers.q16),   q16_code:   cod(answers.q16),
+    q16b_concern_types:     answers.q16b ? mlbl(answers.q16b) : 'N/A',
+    q16b_codes:             answers.q16b ? mcod(answers.q16b) : '',
+    q16bf_greatest_concern: answers.q16bf ? lbl(answers.q16bf) : 'N/A',
+    q16bf_code:             answers.q16bf ? cod(answers.q16bf) : '',
+    q17_data_confidence:    lbl(answers.q17),   q17_code:   cod(answers.q17),
+    q18_insight_frequency:  lbl(answers.q18),   q18_code:   cod(answers.q18),
+    q19_risk_reduction:     lbl(answers.q19),   q19_code:   cod(answers.q19)
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {}).finally(() => showScreen('SCR-complete'));
+}
+
+// ─────────────────────────────
+// INIT
+// ─────────────────────────────
+buildScreens();
+</script>
+</body>
+</html>
